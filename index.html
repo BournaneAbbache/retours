@@ -21,7 +21,7 @@
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       width: 100%;
-      max-width: 500px;
+      max-width: 700px;
     }
 
     h2 {
@@ -90,7 +90,7 @@
         <textarea name="message" id="message" rows="6" maxlength="2000" required></textarea>
       </div>
       <input type="submit" id="button" value="Envoyer">
-      <div class="info-message" id="info-msg">Merci d’attendre quelques minutes avant un nouvel envoi.</div>
+      <div class="info-message" id="info-msg"></div>
     </form>
   </div>
 
@@ -101,30 +101,56 @@
     const btn = document.getElementById('button');
     const form = document.getElementById('form');
     const infoMsg = document.getElementById('info-msg');
+    const messageField = document.getElementById('message');
 
-    // Rediriger automatiquement si déjà envoyé (protection locale)
-    /*if (localStorage.getItem('feedback_sent') === 'true') {
-      window.location.href = 'merci.html';
-    }*/
+    const DELAI_MS = 1 * 60 * 1000; // 5 minutes en millisecondes
 
+    // Fonction qui met à jour l'état du formulaire
+    function updateFormState() {
+      const now = Date.now();
+      const lastSend = localStorage.getItem('lastSendTime');
+      const wasSent = localStorage.getItem('feedback_sent') === 'true';
+
+      if (wasSent && lastSend && now - lastSend < DELAI_MS) {
+        infoMsg.innerText = "Vous avez déjà envoyé votre message.";
+        infoMsg.style.display = 'block';
+        btn.disabled = true;
+        btn.value = "Envoyé";
+        messageField.disabled = true;
+        return true;
+      } else {
+        btn.disabled = false;
+        btn.value = "Envoyer";
+        messageField.disabled = false;
+        infoMsg.style.display = 'none';
+        localStorage.removeItem('feedback_sent');
+        return false;
+      }
+    }
+
+    // Vérifie immédiatement à l'ouverture
+    updateFormState();
+
+    // Vérifie toutes les 10 secondes si le délai est dépassé
+    setInterval(updateFormState, 10000);
+
+    // Soumission du formulaire
     form.addEventListener('submit', function(event) {
       event.preventDefault();
 
-      // Vérifier délai d’attente (5 minutes)
       const now = Date.now();
       const lastSend = localStorage.getItem('lastSendTime');
-     if (lastSend && now - lastSend < 5 * 60 * 1000) { // 5 min
-           
-     infoMsg.style.display = 'block';
+
+      if (lastSend && now - lastSend < DELAI_MS) {
+        infoMsg.innerText = "Vous avez déjà envoyé votre message.";
+        infoMsg.style.display = 'block';
         return;
       }
 
-      // Masquer message et désactiver bouton
       infoMsg.style.display = 'none';
       btn.value = 'Envoi...';
       btn.disabled = true;
 
-      // Envoyer via EmailJS
       emailjs.sendForm('default_service', 'template_tcuz0vo', this)
         .then(() => {
           localStorage.setItem('feedback_sent', 'true');
