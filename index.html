@@ -41,7 +41,6 @@
       color: #555;
     }
 
-    .field input,
     .field textarea {
       width: 100%;
       padding: 10px;
@@ -71,6 +70,14 @@
     #button:hover:not(:disabled) {
       background-color: #0052a3;
     }
+
+    .info-message {
+      text-align: center;
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -79,43 +86,54 @@
     <h2>Aidez-nous à améliorer ce module grâce à vos retours</h2>
     <form id="form">
       <div class="field">
-        <label for="message">Votre message</label>
-        <textarea name="message" id="message" rows="6" required></textarea>
+        <label for="message">Votre message (max 1000 caractères)</label>
+        <textarea name="message" id="message" rows="6" maxlength="1000" required></textarea>
       </div>
       <input type="submit" id="button" value="Envoyer">
+      <div class="info-message" id="info-msg">⏳ Merci d’attendre quelques minutes avant un nouvel envoi.</div>
     </form>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
-    emailjs.init('HR-3ieqmYyUg1a_XY');
+    emailjs.init('HR-3ieqmYyUg1a_XY'); // Remplace par ta clé publique EmailJS
 
     const btn = document.getElementById('button');
     const form = document.getElementById('form');
+    const infoMsg = document.getElementById('info-msg');
 
-    // Vérification avant affichage du formulaire
-   /* if (localStorage.getItem('feedback_sent') === 'true') {
+    // Rediriger automatiquement si déjà envoyé (protection locale)
+    if (localStorage.getItem('feedback_sent') === 'true') {
       window.location.href = 'merci.html';
-    }*/
+    }
 
     form.addEventListener('submit', function(event) {
       event.preventDefault();
 
+      // Vérifier délai d’attente (5 minutes)
+      const now = Date.now();
+      const lastSend = localStorage.getItem('lastSendTime');
+      if (lastSend && now - lastSend < 5 * 60 * 1000) { // 5 min
+        infoMsg.style.display = 'block';
+        return;
+      }
+
+      // Masquer message et désactiver bouton
+      infoMsg.style.display = 'none';
       btn.value = 'Envoi...';
       btn.disabled = true;
 
-      const serviceID = 'default_service';
-      const templateID = 'template_tcuz0vo';
-
-      emailjs.sendForm(serviceID, templateID, this)
+      // Envoyer via EmailJS
+      emailjs.sendForm('default_service', 'template_tcuz0vo', this)
         .then(() => {
           localStorage.setItem('feedback_sent', 'true');
+          localStorage.setItem('lastSendTime', Date.now().toString());
           window.location.href = 'merci.html';
         }, (err) => {
           console.error('Erreur EmailJS :', err);
           btn.value = 'Envoyer';
           btn.disabled = false;
-          alert('Échec de l’envoi.\n' + JSON.stringify(err));
+          alert('❌ Échec de l’envoi.\n' + JSON.stringify(err));
         });
     });
   </script>
