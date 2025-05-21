@@ -90,7 +90,7 @@
         <textarea name="message" id="message" rows="6" maxlength="2000" required></textarea>
       </div>
       <input type="submit" id="button" value="Envoyer">
-      <div class="info-message" id="info-msg">⏳ Merci d’attendre quelques minutes avant un nouvel envoi.</div>
+      <div class="info-message" id="info-msg">Merci d’attendre quelques minutes avant un nouvel envoi.</div>
     </form>
   </div>
 
@@ -113,7 +113,7 @@
       // Vérifier délai d’attente (5 minutes)
       const now = Date.now();
       const lastSend = localStorage.getItem('lastSendTime');
-     if (lastSend && now - lastSend < 1 * 60 * 1000) { // 5 min
+     if (lastSend && now - lastSend < 5 * 60 * 1000) { // 5 min
            
      infoMsg.style.display = 'block';
         return;
@@ -134,7 +134,7 @@
           console.error('Erreur EmailJS :', err);
           btn.value = 'Envoyer';
           btn.disabled = false;
-          alert('❌ Échec de l’envoi.\n' + JSON.stringify(err));
+          alert('Échec de l’envoi.\n' + JSON.stringify(err));
         });
     });
   </script>
