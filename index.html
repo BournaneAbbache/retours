@@ -96,14 +96,14 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
-    emailjs.init('HR-3ieqmYyUg1a_XY'); // Remplace par ta clé publique EmailJS
+    emailjs.init('HR-3ieqmYyUg1a_XY'); 
 
     const btn = document.getElementById('button');
     const form = document.getElementById('form');
     const infoMsg = document.getElementById('info-msg');
     const messageField = document.getElementById('message');
 
-    const DELAI_MS = 1 * 60 * 1000; // 5 minutes en millisecondes
+    const DELAI_MS = 360 * 60 * 1000; 
 
     // Fonction qui met à jour l'état du formulaire
     function updateFormState() {
