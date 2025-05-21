@@ -113,8 +113,10 @@
       // Vérifier délai d’attente (5 minutes)
       const now = Date.now();
       const lastSend = localStorage.getItem('lastSendTime');
-      if (lastSend && now - lastSend < 5 * 60 * 1000) { // 5 min
-        infoMsg.style.display = 'block';
+     // if (lastSend && now - lastSend < 1 * 60 * 1000) { // 5 min
+     if (lastSend && now - lastSend < 1000) { // 1 min
+           
+     infoMsg.style.display = 'block';
         return;
       }
 
