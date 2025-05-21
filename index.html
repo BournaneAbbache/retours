@@ -86,8 +86,8 @@
     <h2>Aidez-nous à améliorer ce module grâce à vos retours</h2>
     <form id="form">
       <div class="field">
-        <label for="message">Votre message (max 1000 caractères)</label>
-        <textarea name="message" id="message" rows="6" maxlength="1000" required></textarea>
+        <label for="message">Votre message</label>
+        <textarea name="message" id="message" rows="6" maxlength="2000" required></textarea>
       </div>
       <input type="submit" id="button" value="Envoyer">
       <div class="info-message" id="info-msg">⏳ Merci d’attendre quelques minutes avant un nouvel envoi.</div>
@@ -103,9 +103,9 @@
     const infoMsg = document.getElementById('info-msg');
 
     // Rediriger automatiquement si déjà envoyé (protection locale)
-    if (localStorage.getItem('feedback_sent') === 'true') {
+    /*if (localStorage.getItem('feedback_sent') === 'true') {
       window.location.href = 'merci.html';
-    }
+    }*/
 
     form.addEventListener('submit', function(event) {
       event.preventDefault();
@@ -113,8 +113,7 @@
       // Vérifier délai d’attente (5 minutes)
       const now = Date.now();
       const lastSend = localStorage.getItem('lastSendTime');
-     // if (lastSend && now - lastSend < 1 * 60 * 1000) { // 5 min
-     if (lastSend && now - lastSend < 1000) { // 1 min
+     if (lastSend && now - lastSend < 1 * 60 * 1000) { // 5 min
            
      infoMsg.style.display = 'block';
         return;
